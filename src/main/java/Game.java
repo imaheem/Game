@@ -34,6 +34,14 @@ public class Game {
     }
 
     void initializeMonsters() {
+        // Clear the entire monsters array
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                monsters[i][j] = null;
+            }
+        }
+
+        // Place monsters randomly
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 if (i == playerX && j == playerY) {
@@ -42,10 +50,6 @@ public class Game {
                 if (i == treasureX && j == treasureY) {
                     continue; // Skip treasure's cell
                 }
-                if (monsters[i][j] != null) {
-                    continue; // Skip cells that already have monsters
-                }
-
                 if (random.nextDouble() < 0.1) {
                     int monsterType = random.nextInt(3);
                     switch (monsterType) {
@@ -61,6 +65,21 @@ public class Game {
                     }
                 }
             }
+        }
+    }
+
+    public void displayGrid() {
+        for (int y = 0; y < gridSize; y++) {
+            for (int x = 0; x < gridSize; x++) {
+                if (playerX == x && playerY == y) {
+                    System.out.print("P ");
+                } else if (monsters[x][y] != null) {
+                    System.out.print(monsters[x][y].getSymbol() + " ");
+                } else {
+                    System.out.print(". ");
+                }
+            }
+            System.out.println();
         }
     }
 
@@ -94,21 +113,6 @@ public class Game {
 
     public boolean isGameOver() {
         return isGameOver;
-    }
-
-    public void displayGrid() {
-        for (int y = 0; y < gridSize; y++) {
-            for (int x = 0; x < gridSize; x++) {
-                if (playerX == x && playerY == y) {
-                    System.out.print("P ");
-                } else if (monsters[x][y] != null) {
-                    System.out.print(monsters[x][y].getSymbol() + " ");
-                } else {
-                    System.out.print(". ");
-                }
-            }
-            System.out.println();
-        }
     }
 
     public int getPlayerY() {
