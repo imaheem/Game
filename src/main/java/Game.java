@@ -1,11 +1,23 @@
+import java.util.Map;
 import java.util.Random;
 public class Game {
 
     private int gridSize;
+    private int[][] monsters;
     private int playerX, playerY;
     private int treasureX, treasureY;
-    private int[][] monsters;
-    private boolean isGameOver = false;
+    private boolean isGameOver;
+    private Random random = new Random();
+
+    // Monster types and greetings
+    private final int ZOMBIE = 2;
+    private final int VAMPIRE = 3;
+    private final int GHOST = 4;
+    private final Map<Integer, String> monsterGreetings = Map.of(
+            ZOMBIE, "The Zombie groans!",
+            VAMPIRE, "The Vampire hisses!",
+            GHOST, "The Ghost wails!"
+    );
 
     public Game(int gridSize) {
         this.gridSize = gridSize;
@@ -22,15 +34,14 @@ public class Game {
             playerY = random.nextInt(gridSize);
         } while (playerX == treasureX && playerY == treasureY);
 
-// Let's add monsters (for simplicity, just one type of monster)
         monsters = new int[gridSize][gridSize];
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 if ((i == playerX && j == playerY) || (i == treasureX && j == treasureY)) {
-                    continue;  // Skip adding a monster at the player's or treasure's position
+                    continue;
                 }
-                if (random.nextDouble() < 0.1) { // 10% chance to place a monster
-                    monsters[i][j] = 1;
+                if (random.nextDouble() < 0.1) {
+                    monsters[i][j] = random.nextInt(3) + 2;  // 2, 3, or 4 (for Zombie, Vampire, or Ghost)
                 }
             }
         }
@@ -54,10 +65,11 @@ public class Game {
         if (playerX == treasureX && playerY == treasureY) {
             System.out.println("You found the treasure! You win!");
             isGameOver = true;
-        } else if (monsters[playerX][playerY] == 1) {
+        } else if (monsters[playerX][playerY] != 0) {
+            System.out.println(monsterGreetings.get(monsters[playerX][playerY]));
             System.out.println("A monster caught you! You lose!");
             isGameOver = true;
-        } else {
+    } else {
             int distance = Math.abs(playerX - treasureX) + Math.abs(playerY - treasureY);
             System.out.println("You are " + distance + " steps away from the treasure.");
         }
@@ -72,19 +84,18 @@ public class Game {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
                 if (playerX == x && playerY == y) {
-                    if (playerX == treasureX && playerY == treasureY) {
-                        System.out.print("T ");  // T for Treasure when player is on it
-                    } else {
-                        System.out.print("P ");  // P for Player
-                    }
-                } else if (monsters[x][y] == 1) {
-                    System.out.print("M ");  // M for Monster
+                    System.out.print("P ");
+                } else if (monsters[x][y] == ZOMBIE) {
+                    System.out.print("Z ");
+                } else if (monsters[x][y] == VAMPIRE) {
+                    System.out.print("V ");
+                } else if (monsters[x][y] == GHOST) {
+                    System.out.print("G ");
                 } else {
-                    System.out.print(". ");  // . for unexplored/empty space
+                    System.out.print(". ");
                 }
             }
             System.out.println();
         }
-
     }
 }
