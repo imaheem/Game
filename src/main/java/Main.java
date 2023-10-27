@@ -19,8 +19,11 @@ public class Main {
             }
 
             game.move(move);
-            game.displayGrid();
+            if (!game.isGameOver()) {  // Check if game is still ongoing
+                game.displayGrid();
+            }
         }
+
         scanner.close();
     }
 }

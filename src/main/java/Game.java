@@ -12,17 +12,24 @@ public class Game {
 
         // Place player and treasure randomly
         Random random = new Random();
-        playerX = random.nextInt(gridSize);
-        playerY = random.nextInt(gridSize);
-
+        // Set treasure's location
         treasureX = random.nextInt(gridSize);
         treasureY = random.nextInt(gridSize);
 
-        // Let's add monsters (for simplicity, just one type of monster)
+// Set player's initial position ensuring it's not on the treasure
+        do {
+            playerX = random.nextInt(gridSize);
+            playerY = random.nextInt(gridSize);
+        } while (playerX == treasureX && playerY == treasureY);
+
+// Let's add monsters (for simplicity, just one type of monster)
         monsters = new int[gridSize][gridSize];
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
-                if (random.nextBoolean()) {
+                if ((i == playerX && j == playerY) || (i == treasureX && j == treasureY)) {
+                    continue;  // Skip adding a monster at the player's or treasure's position
+                }
+                if (random.nextDouble() < 0.1) { // 10% chance to place a monster
                     monsters[i][j] = 1;
                 }
             }
@@ -45,14 +52,14 @@ public class Game {
                 break;
         }
         if (playerX == treasureX && playerY == treasureY) {
-            System.out.println("You found the treasure! You win!" );
+            System.out.println("You found the treasure! You win!");
             isGameOver = true;
         } else if (monsters[playerX][playerY] == 1) {
-            System.out.println("A monster caught you! You lose!" );
+            System.out.println("A monster caught you! You lose!");
             isGameOver = true;
         } else {
             int distance = Math.abs(playerX - treasureX) + Math.abs(playerY - treasureY);
-            System.out.println("You are " + distance + " steps away from the treasure." );
+            System.out.println("You are " + distance + " steps away from the treasure.");
         }
 
     }
@@ -65,11 +72,15 @@ public class Game {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
                 if (playerX == x && playerY == y) {
-                    System.out.print("P " );  // P for Player
+                    if (playerX == treasureX && playerY == treasureY) {
+                        System.out.print("T ");  // T for Treasure when player is on it
+                    } else {
+                        System.out.print("P ");  // P for Player
+                    }
                 } else if (monsters[x][y] == 1) {
-                    System.out.print("M " );  // M for Monster
+                    System.out.print("M ");  // M for Monster
                 } else {
-                    System.out.print(". " );  // . for unexplored/empty space
+                    System.out.print(". ");  // . for unexplored/empty space
                 }
             }
             System.out.println();
