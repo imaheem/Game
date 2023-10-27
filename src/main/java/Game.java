@@ -3,7 +3,7 @@ import java.util.Random;
 public class Game {
 
     private int gridSize;
-    private int[][] monsters;
+    private Monster[][] monsters;
     private int playerX, playerY;
     private int treasureX, treasureY;
     private boolean isGameOver;
@@ -34,14 +34,25 @@ public class Game {
             playerY = random.nextInt(gridSize);
         } while (playerX == treasureX && playerY == treasureY);
 
-        monsters = new int[gridSize][gridSize];
+        monsters = new Monster[gridSize][gridSize];
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
                 if ((i == playerX && j == playerY) || (i == treasureX && j == treasureY)) {
                     continue;
                 }
                 if (random.nextDouble() < 0.1) {
-                    monsters[i][j] = random.nextInt(3) + 2;  // 2, 3, or 4 (for Zombie, Vampire, or Ghost)
+                    int monsterType = random.nextInt(3);
+                    switch (monsterType) {
+                        case 0:
+                            monsters[i][j] = new Zombie();
+                            break;
+                        case 1:
+                            monsters[i][j] = new Vampire();
+                            break;
+                        case 2:
+                            monsters[i][j] = new Ghost();
+                            break;
+                    }
                 }
             }
         }
@@ -63,15 +74,15 @@ public class Game {
                 break;
         }
         if (playerX == treasureX && playerY == treasureY) {
-            System.out.println("You found the treasure! You win!");
+            System.out.println("You found the treasure! You win!" );
             isGameOver = true;
-        } else if (monsters[playerX][playerY] != 0) {
-            System.out.println(monsterGreetings.get(monsters[playerX][playerY]));
-            System.out.println("A monster caught you! You lose!");
+        } else if (monsters[playerX][playerY] != null) {
+            System.out.println(monsters[playerX][playerY].greet());
+            System.out.println("A monster caught you! You lose!" );
             isGameOver = true;
-    } else {
+        } else {
             int distance = Math.abs(playerX - treasureX) + Math.abs(playerY - treasureY);
-            System.out.println("You are " + distance + " steps away from the treasure.");
+            System.out.println("You are " + distance + " steps away from the treasure." );
         }
 
     }
@@ -84,15 +95,11 @@ public class Game {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
                 if (playerX == x && playerY == y) {
-                    System.out.print("P ");
-                } else if (monsters[x][y] == ZOMBIE) {
-                    System.out.print("Z ");
-                } else if (monsters[x][y] == VAMPIRE) {
-                    System.out.print("V ");
-                } else if (monsters[x][y] == GHOST) {
-                    System.out.print("G ");
+                    System.out.print("P " );
+                } else if (monsters[x][y] != null) {
+                    System.out.print(monsters[x][y].getSymbol() + " " );
                 } else {
-                    System.out.print(". ");
+                    System.out.print(". " );
                 }
             }
             System.out.println();
